@@ -27,7 +27,7 @@ def touppercase():
         if text:
             result = text.upper()
             original = text
-    return render_template('touppercase.html', result=result, original=original)
+    return render_template('/works/touppercase.html', result=result, original=original)
 
 @app.route('/works/circle', methods=['GET','POST'])
 def area_circle():
@@ -46,8 +46,7 @@ def area_circle():
                     radius = raw
             except ValueError:
                 pass
-    return render_template('area_circle.html',result=result , radius=radius)
-
+    return render_template('/works/area_circle.html',result=result , radius=radius)
 
 @app.route('/works/triangle', methods=['GET', 'POST'])
 def area_triangle():
@@ -72,7 +71,60 @@ def area_triangle():
                     height = raw_height
             except ValueError:
                 pass
-    return render_template('area_triangle.html', result=result, base=base, height=height)
+    return render_template('/works/area_triangle.html', result=result, base=base, height=height)
+
+@app.route('/works/infixconverter', methods=['GET', 'POST'])
+def infix_converter():
+    
+    infix_expr = None
+    postfix_result = None
+    error = None
+    
+    if request.method == 'POST':
+        try:
+            postfix_result = infix_to_postfix(infix_expr)
+        except Exception as e:
+                error = f"Error: Invalid expression. {str(e)}"
+
+    return render_template('/works/lab5.html', 
+                         infix=infix_expr, 
+                         postfix=postfix_result,
+                         error=error)
+
+def infix_to_postfix(expression):
+    """Converts infix to postfix using Shunting Yard Algorithm."""
+    
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    associativity = {'+': True, '-': True, '*': True, '/': True, '^': False}
+    
+    ops_stack = []
+    output = []
+    expression = expression.replace(' ', '')
+    
+    for token in expression:
+        if token.isalnum():
+            output.append(token)
+        elif token == '(':
+            ops_stack.append(token)
+        elif token == ')':
+            while ops_stack and ops_stack[-1] != '(':
+                output.append(ops_stack.pop())
+            if ops_stack:
+                ops_stack.pop()
+        elif token in precedence:
+            while ops_stack and ops_stack[-1] != '(' and ops_stack[-1] in precedence:
+                top_op = ops_stack[-1]
+                if (associativity[token] and precedence[token] <= precedence[top_op]) or \
+                   (not associativity[token] and precedence[token] < precedence[top_op]):
+                    output.append(ops_stack.pop())
+                else:
+                    break
+            ops_stack.append(token)
+    
+    while ops_stack:
+        output.append(ops_stack.pop())
+    
+    return ''.join(output)
 
 if __name__ == '__main__':
     app.run(debug=True)

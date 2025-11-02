@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %} Infix to Postfix Converter {% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/touppercase.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="panel">
+        <h1 class="heading">Infix to Postfix Converter</h1>
+
+        <form class="form" method="post" action="{{ url_for('lab5') }}">
+        <div class="field">
+            <label for="infixExpression" class="label">Enter infix expression (e.g., A + B * C)</label>
+            <textarea id="infixExpression" name="infixExpression" rows="6" class="textarea" 
+                    placeholder="Type your expression here..." required>{{ original if original else '' }}</textarea>
+        </div>
+
+        <div class="field field--read">
+            <label class="label">Postfix Result</label>
+            <textarea class="textarea read" rows="6" readonly>{{ result if result else '' }}</textarea>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn">Convert to Postfix</button>
+            <a class="btn btn-ghost" href="{{ url_for('lab5') }}">Clear</a>
+        </div>
+        </form>
+    </div>
+{% endblock %}
