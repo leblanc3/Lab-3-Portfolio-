@@ -81,10 +81,14 @@ def infix_converter():
     error = None
     
     if request.method == 'POST':
-        try:
-            postfix_result = infix_to_postfix(infix_expr)
-        except Exception as e:
-                error = f"Error: Invalid expression. {str(e)}"
+
+        infix_expr = request.form.get('infix', '').strip()
+
+        if infix_expr:
+            try:
+                postfix_result = infix_to_postfix(infix_expr)
+            except Exception as e:
+                    error = f"Error: Invalid expression. {str(e)}"
 
     return render_template('/works/lab5.html', 
                          infix=infix_expr, 
@@ -92,7 +96,6 @@ def infix_converter():
                          error=error)
 
 def infix_to_postfix(expression):
-    """Converts infix to postfix using Shunting Yard Algorithm."""
     
     precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
     associativity = {'+': True, '-': True, '*': True, '/': True, '^': False}
